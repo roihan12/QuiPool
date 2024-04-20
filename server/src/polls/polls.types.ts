@@ -1,6 +1,7 @@
+// service types
 export type CreatePollFields = {
   topic: string;
-  votePerVoter: number;
+  votesPerVoter: number;
   name: string;
 };
 
@@ -10,6 +11,20 @@ export type JoinPollFields = {
 };
 
 export type RejoinPollFields = {
+  pollID: string;
+  userID: string;
+  name: string;
+};
+
+// repository types
+export type CreatePollData = {
+  pollID: string;
+  userID: string;
+  topic: string;
+  votesPerVoter: number;
+};
+
+export type AddParticipantData = {
   pollID: string;
   userID: string;
   name: string;

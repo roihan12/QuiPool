@@ -19,7 +19,7 @@ export class CreatePollDto {
   @IsInt()
   @Min(1)
   @Max(5)
-  votePerVoter: number;
+  votesPerVoter: number;
 
   @ApiProperty({
     minimum: 1,
