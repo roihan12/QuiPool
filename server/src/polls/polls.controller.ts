@@ -1,7 +1,11 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
-import { CreatePollDto, JoinPollDto } from './polls.dtos';
+import { Body, Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
+import { CreatePollDto, JoinPollDto, RejoinPollDto } from './polls.dtos';
 import { PollsService } from './polls.service';
+import { ApiBasicAuth, ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { PollsAuthGuard } from './polls.auth.guard';
+import { RequestWithAuth } from './polls.types';
 
+@ApiTags('Polls')
 @Controller('polls')
 export class PollsController {
   constructor(private pollsService: PollsService) {}
@@ -21,12 +25,15 @@ export class PollsController {
 
     return result;
   }
+  @ApiBody({ type: RejoinPollDto })
+  @UseGuards(PollsAuthGuard)
   @Post('/rejoin')
-  async rejoin() {
+  async rejoin(@Req() request: RequestWithAuth) {
+    const { userID, pollID, name } = request;
     const result = await this.pollsService.rejoinPoll({
-      name: 'John Doe',
-      pollID: '234345',
-      userID: '123456',
+      name,
+      pollID,
+      userID,
     });
 
     return result;

@@ -50,3 +50,9 @@ export class JoinPollDto {
   @Length(1, 25)
   name: string;
 }
+
+export class RejoinPollDto {
+  @ApiProperty({})
+  @IsString()
+  accessToken: string;
+}
