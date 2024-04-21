@@ -2,13 +2,25 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { PollsService } from './polls.service';
-import { Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Logger,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { Namespace, Socket } from 'socket.io';
-
+import { SocketWithAuth } from './polls.types';
+import { WsBadRequestException } from 'src/exceptions/ws-exceptions';
+import { WsCatchAllFilter } from 'src/exceptions/ws-catch-all-filter';
+@UsePipes(new ValidationPipe())
+@UseFilters(new WsCatchAllFilter())
 @WebSocketGateway({
   namespace: 'polls',
 })
@@ -25,16 +37,25 @@ export class PollsGateway
     this.logger.log('Gateway initialized');
   }
 
-  handleConnection(client: Socket) {
+  handleConnection(client: SocketWithAuth) {
     const sockets = this.io.sockets;
-    this.logger.log(`WS client with id: ${client.id} connected!`);
+    this.logger.debug(
+      `Socket connectted with userID: ${client.userID}, PollID: ${client.pollID}, name: ${client.name}`,
+    );
     this.logger.debug(`Number of connected clients: ${sockets.size}`);
     this.io.emit('hello', `from ${client.id}`);
   }
 
-  handleDisconnect(client: Socket) {
+  handleDisconnect(client: SocketWithAuth) {
     const sockets = this.io.sockets;
-    this.logger.log(`Disconnected socket with id: ${client.id}`);
+    this.logger.debug(
+      `Socket connectted with userID: ${client.userID}, PollID: ${client.pollID}, name: ${client.name}`,
+    );
     this.logger.debug(`Number of connected clients: ${sockets.size}`);
+  }
+
+  @SubscribeMessage('test')
+  async test() {
+    throw new BadRequestException(['message']);
   }
 }

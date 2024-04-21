@@ -1,11 +1,21 @@
-import { Body, Controller, Logger, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Logger,
+  Post,
+  Req,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CreatePollDto, JoinPollDto, RejoinPollDto } from './polls.dtos';
 import { PollsService } from './polls.service';
-import { ApiBasicAuth, ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { PollsAuthGuard } from './polls.auth.guard';
 import { RequestWithAuth } from './polls.types';
 
 @ApiTags('Polls')
+@UsePipes(new ValidationPipe())
 @Controller('polls')
 export class PollsController {
   constructor(private pollsService: PollsService) {}
