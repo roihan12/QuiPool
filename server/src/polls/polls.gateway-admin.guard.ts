@@ -36,11 +36,11 @@ export class PollsGatewayAdminGuard implements CanActivate {
 
       this.logger.debug(`Validating auth token before connection: ${payload}`);
 
-      const { userID, pollID } = payload;
+      const { sub, pollID } = payload;
 
       const poll = await this.pollsService.getPoll(pollID);
 
-      if (poll.adminID !== userID) {
+      if (poll.adminID !== sub) {
         throw new WsUnauthorizedException('Admin privilages required');
       }
       return true;
