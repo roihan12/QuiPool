@@ -11,6 +11,7 @@ import { createNominationID, createPollID, createUserID } from 'src/utils/ids';
 import { PollsRepository } from './polls.repository';
 import { JwtService } from '@nestjs/jwt';
 import { Poll } from 'shared';
+import getResults from './getResults';
 
 @Injectable()
 export class PollsService {
@@ -143,5 +144,23 @@ export class PollsService {
     }
 
     return this.pollsRepository.addParticipantRangkings(rangkingData);
+  }
+
+  async computeResults(pollID: string): Promise<Poll> {
+    const poll = await this.pollsRepository.getPoll(pollID);
+    this.logger.debug(`Poll results: ${JSON.stringify(poll)}`);
+
+    const results = getResults(
+      poll.rangkings,
+      poll.nominations,
+      poll.votesPerVoter,
+    );
+    this.logger.debug(`Computed results: ${JSON.stringify(results, null, 2)}`);
+
+    return this.pollsRepository.addResults(pollID, results);
+  }
+
+  async cancelPoll(pollID: string): Promise<void> {
+    return this.pollsRepository.deletePoll(pollID);
   }
 }

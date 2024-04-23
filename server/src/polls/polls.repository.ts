@@ -13,7 +13,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
 import { IOREDISKEY } from 'src/redis/redis.module';
-import { Poll } from 'shared';
+import { Poll, Results } from 'shared';
 
 @Injectable()
 export class PollsRepository {
@@ -35,6 +35,7 @@ export class PollsRepository {
       participants: {},
       nominations: {},
       rangkings: {},
+      results: [],
       adminID: fields.userID,
       hasStarted: false,
     };
@@ -76,9 +77,9 @@ export class PollsRepository {
       );
       this.logger.verbose(currentPoll);
 
-      if (currentPoll?.hasStarted) {
-        throw new BadRequestException(`The Poll has already started`);
-      }
+      // if (currentPoll?.hasStarted) {
+      //   throw new BadRequestException(`The Poll has already started`);
+      // }
 
       return JSON.parse(currentPoll);
     } catch (error) {
@@ -221,6 +222,39 @@ export class PollsRepository {
       throw new InternalServerErrorException(
         'Failed to add participant rangking',
       );
+    }
+  }
+
+  async addResults(pollID: string, results: Results): Promise<Poll> {
+    this.logger.log(
+      `Attempting to add results to poll: ${pollID}`,
+      JSON.stringify(results),
+    );
+
+    const key = `polls:${pollID}`;
+    const resultsPath = '.results';
+    try {
+      await this.redisClient.send_command(
+        'JSON.SET',
+        key,
+        resultsPath,
+        JSON.stringify(results),
+      );
+      return this.getPoll(pollID);
+    } catch (error) {
+      this.logger.error(`Failed to add results to poll: ${pollID}`);
+      throw new InternalServerErrorException('Failed to add results');
+    }
+  }
+
+  async deletePoll(pollID: string): Promise<void> {
+    this.logger.log(`Attempting to delete poll: ${pollID}`);
+    const key = `polls:${pollID}`;
+    try {
+      await this.redisClient.send_command('JSON.DEL', key);
+    } catch (error) {
+      this.logger.error(`Failed to delete poll: ${pollID}`);
+      throw new InternalServerErrorException('Failed to delete poll');
     }
   }
 }

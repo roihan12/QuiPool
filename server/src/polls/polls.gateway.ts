@@ -88,23 +88,21 @@ export class PollsGateway
     }
   }
 
-  @UseGuards(PollsGatewayAdminGuard)
-  @SubscribeMessage('remove_participant')
-  async removeParticipant(
-    @MessageBody('id') id: string,
+  @SubscribeMessage('submit_rangkings')
+  async submitRangkings(
     @ConnectedSocket() client: SocketWithAuth,
-  ) {
+    @MessageBody('rangkings') rangkings: string[],
+  ): Promise<void> {
     this.logger.debug(
-      `Attempting to remove participant ${id} from poll ${client.pollID}`,
+      `Attempting votes for user ${client.userID} in poll ${client.pollID}`,
     );
+    const updatedPoll = await this.pollsService.submitRangkings({
+      pollID: client.pollID,
+      userID: client.userID,
+      rangkings,
+    });
 
-    const updatedPoll = await this.pollsService.removeParticipant(
-      client.pollID,
-      id,
-    );
-    if (updatedPoll) {
-      this.io.to(client.pollID).emit('poll_updated', updatedPoll);
-    }
+    this.io.to(client.pollID).emit('poll_updated', updatedPoll);
   }
 
   @SubscribeMessage('nominate')
@@ -123,6 +121,25 @@ export class PollsGateway
     });
 
     this.io.to(client.pollID).emit('poll_updated', updatedPoll);
+  }
+
+  @UseGuards(PollsGatewayAdminGuard)
+  @SubscribeMessage('remove_participant')
+  async removeParticipant(
+    @MessageBody('id') id: string,
+    @ConnectedSocket() client: SocketWithAuth,
+  ) {
+    this.logger.debug(
+      `Attempting to remove participant ${id} from poll ${client.pollID}`,
+    );
+
+    const updatedPoll = await this.pollsService.removeParticipant(
+      client.pollID,
+      id,
+    );
+    if (updatedPoll) {
+      this.io.to(client.pollID).emit('poll_updated', updatedPoll);
+    }
   }
 
   @UseGuards(PollsGatewayAdminGuard)
@@ -153,20 +170,22 @@ export class PollsGateway
     this.io.to(client.pollID).emit('poll_updated', updatedPoll);
   }
 
-  @SubscribeMessage('submit_rangkings')
-  async submitRangkings(
-    @ConnectedSocket() client: SocketWithAuth,
-    @MessageBody('rangkings') rangkings: string[],
-  ): Promise<void> {
-    this.logger.debug(
-      `Attempting votes for user ${client.userID} in poll ${client.pollID}`,
-    );
-    const updatedPoll = await this.pollsService.submitRangkings({
-      pollID: client.pollID,
-      userID: client.userID,
-      rangkings,
-    });
+  @UseGuards(PollsGatewayAdminGuard)
+  @SubscribeMessage('close_poll')
+  async closePoll(@ConnectedSocket() client: SocketWithAuth): Promise<void> {
+    this.logger.debug(`Closing poll: ${client.pollID} and computing results`);
+
+    const updatedPoll = await this.pollsService.computeResults(client.pollID);
 
     this.io.to(client.pollID).emit('poll_updated', updatedPoll);
+  }
+
+  @UseGuards(PollsGatewayAdminGuard)
+  @SubscribeMessage('cancel_poll')
+  async cancelPoll(@ConnectedSocket() client: SocketWithAuth): Promise<void> {
+    this.logger.debug(`Attempting to cancel poll with id: ${client.pollID}`);
+    await this.pollsService.cancelPoll(client.pollID);
+
+    this.io.to(client.pollID).emit('poll_cancelled');
   }
 }
