@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Welcome from "./pages/Welcome";
-import { AppPage, state } from "./state";
+import { AppPage, actions, state } from "./state";
 import { CSSTransition } from "react-transition-group";
 import CreatePoll from "./pages/CreatePoll";
 import JoinPoll from "./pages/JoinPoll";
@@ -16,6 +16,12 @@ const routeConfig = {
 
 const Pages: React.FC = () => {
   const currentState = useSnapshot(state);
+
+  useEffect(() => {
+    if (currentState.me?.id && !currentState.poll?.hasStarted) {
+      actions.setPage(AppPage.WaitingRoom);
+    }
+  }, [currentState.me?.id, currentState.poll?.hasStarted]);
 
   return (
     <>
