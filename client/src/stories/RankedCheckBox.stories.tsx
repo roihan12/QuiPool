@@ -1,17 +1,17 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from "react";
+import { Meta, StoryFn } from "@storybook/react";
 
-import RankedCheckBox from '../components/ui/RankedCheckBox';
+import RankedCheckBox from "../components/ui/RankedCheckBox";
 
 export default {
-  title: 'RankedCheckBox',
+  title: "RankedCheckBox",
   component: RankedCheckBox,
   argTypes: {
-    onSelect: { action: 'selected' },
+    onSelect: { action: "selected" },
   },
-} as ComponentMeta<typeof RankedCheckBox>;
+} as Meta<typeof RankedCheckBox>;
 
-const Template: ComponentStory<typeof RankedCheckBox> = (args) => (
+const Template: StoryFn<typeof RankedCheckBox> = (args) => (
   <div className="h-screen max-w-sm m-auto">
     <RankedCheckBox {...args} />
   </div>

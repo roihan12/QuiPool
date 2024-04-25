@@ -1,8 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import './index.css';
-import Welcome from './pages/Welcome';
+import "./index.css";
 
-const App: React.FC = () => <Welcome />;
+import Pages from "./Pages";
+import { devtools } from "valtio/utils";
+import { state } from "./state";
+
+devtools(state, "app state");
+const App: React.FC = () => <Pages />;
 
 export default App;

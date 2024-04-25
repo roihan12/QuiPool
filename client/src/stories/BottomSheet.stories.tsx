@@ -1,18 +1,18 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from "react";
+import { StoryFn, Meta } from "@storybook/react";
 
-import BottomSheet from '../components/ui/BottomSheet';
+import BottomSheet from "../components/ui/BottomSheet";
 
 export default {
-  title: 'BottomSheet',
+  title: "BottomSheet",
   component: BottomSheet,
-  argTypes: { onClose: { action: 'closing' } },
+  argTypes: { onClose: { action: "closing" } },
   args: {
     isOpen: true,
   },
-} as ComponentMeta<typeof BottomSheet>;
+} as Meta<typeof BottomSheet>;
 
-const Template: ComponentStory<typeof BottomSheet> = (args) => (
+const Template: StoryFn<typeof BottomSheet> = (args) => (
   <div className="max-w-sm m-auto h-screen relative">
     <BottomSheet {...args} />
   </div>

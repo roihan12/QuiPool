@@ -1,22 +1,22 @@
 import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import { StoryFn, Meta } from "@storybook/react";
 
 import NominationForm from '../components/NominationForm';
 import { Nominations } from 'shared/poll-types';
 
 export default {
-  title: 'NominationForm',
+  title: "NominationForm",
   component: NominationForm,
   argTypes: {
-    onClose: { action: 'closing' },
-    onSubmitNomination: { action: 'submitting nomination' },
-    onRemoveNomination: { action: 'removing nomination' },
+    onClose: { action: "closing" },
+    onSubmitNomination: { action: "submitting nomination" },
+    onRemoveNomination: { action: "removing nomination" },
   },
   args: {
-    userID: '1',
+    userID: "1",
     isAdmin: false,
   },
-} as ComponentMeta<typeof NominationForm>;
+} as Meta<typeof NominationForm>;
 
 const nominations: Nominations = {
   item1: {
@@ -33,7 +33,7 @@ const nominations: Nominations = {
   },
 };
 
-const Template: ComponentStory<typeof NominationForm> = (args) => (
+const Template: StoryFn<typeof NominationForm> = (args) => (
   <div className="max-w-sm m-auto h-screen relative">
     <NominationForm {...args} />
   </div>

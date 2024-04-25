@@ -1,8 +1,10 @@
-import React, { Children, useState, useMemo } from 'react';
-import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
-import { useScratch } from 'react-use';
+import React, { Children, useState, useMemo, ReactNode } from "react";
+import { BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import { useScratch } from "react-use";
 
-const HorizontalSwipeList: React.FC = ({ children }) => {
+const HorizontalSwipeList: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [total, childrenArray] = useMemo(
     () => [Children.count(children), Children.toArray(children)],
     [children]

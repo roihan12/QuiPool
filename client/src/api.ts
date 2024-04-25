@@ -18,9 +18,9 @@ const makeRequest = async <T>(
 ): Promise<MakeRequestResponse<T>> => {
   try {
     const response = await fetch(`${baseApiUrl}${endpoint}`, {
-      mode: 'cors',
+      mode: "cors",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       ...reqInit,
     });
@@ -42,13 +42,13 @@ const makeRequest = async <T>(
       e instanceof Error
         ? {
             messages: [
-              import.meta.env.MODE === 'development'
+              import.meta.env.MODE === "development"
                 ? e.message
-                : 'Unknown error',
+                : "Unknown error",
             ],
           }
         : {
-            messages: ['Unknown error'],
+            messages: ["Unknown error"],
           };
 
     return {

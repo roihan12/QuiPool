@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { MdCancel } from 'react-icons/md';
-import { Nominations } from '../pollState';
-import BottomSheet, { BottemSheetProps } from './ui/BottomSheet';
+import React, { useState } from "react";
+import { MdCancel } from "react-icons/md";
+import { Nominations } from "shared/poll-types";
+import BottomSheet, { BottemSheetProps } from "./ui/BottomSheet";
 
 type NominationFormProps = {
   title?: string;
@@ -22,17 +22,17 @@ const NominationForm: React.FC<NominationFormProps> = ({
   userID,
   isAdmin,
 }) => {
-  const [nominationText, setNominationText] = useState<string>('');
+  const [nominationText, setNominationText] = useState<string>("");
 
   const handleSubmitNomination = (nominationText: string) => {
     onSubmitNomination(nominationText);
-    setNominationText('');
+    setNominationText("");
   };
 
   const getBoxStyle = (id: string): string => {
     return id === userID
-      ? 'bg-orange-100 flex-row'
-      : 'bg-gray-100 flex-row-reverse';
+      ? "bg-orange-100 flex-row"
+      : "bg-gray-100 flex-row-reverse";
   };
 
   return (

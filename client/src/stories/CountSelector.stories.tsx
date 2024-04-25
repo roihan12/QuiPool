@@ -1,13 +1,13 @@
-import React from 'react';
-import { ComponentStory, ComponentMeta } from '@storybook/react';
+import React from "react";
+import { Meta, StoryFn } from "@storybook/react";
 
-import CountSelector from '../components/ui/CountSelector';
+import CountSelector from "../components/ui/CountSelector";
 
 export default {
-  title: 'CountSelector',
+  title: "CountSelector",
   component: CountSelector,
   argTypes: {
-    onChange: { action: 'count changed' },
+    onChange: { action: "count changed" },
   },
   args: {
     initial: 3,
@@ -15,9 +15,9 @@ export default {
     max: 5,
     step: 1,
   },
-} as ComponentMeta<typeof CountSelector>;
+} as Meta<typeof CountSelector>;
 
-const Template: ComponentStory<typeof CountSelector> = (args) => (
+const Template: StoryFn<typeof CountSelector> = (args) => (
   <div className="h-screen max-w-sm m-auto">
     <CountSelector {...args} />
   </div>

@@ -1,12 +1,13 @@
-import React from 'react';
-import { CSSTransition } from 'react-transition-group';
-import { MdCancel } from 'react-icons/md';
+import React, { ReactNode } from "react";
+import { CSSTransition } from "react-transition-group";
+import { MdCancel } from "react-icons/md";
 
-import styles from './BottomSheet.module.css';
+import styles from "./BottomSheet.module.css";
 
 export type BottemSheetProps = {
   isOpen: boolean;
   onClose?: (e: React.MouseEvent<SVGElement, MouseEvent>) => void;
+  children?: ReactNode;
 };
 
 const BottomSheet: React.FC<BottemSheetProps> = ({
