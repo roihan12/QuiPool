@@ -34,7 +34,16 @@ export const createSocketWithHandlers = ({
 
   socket.on("connect_error", () => {
     console.log(`Failed to connect to socket ID: ${socket.id}`);
+    actions.addWsError({
+      type: "Connection error",
+      message: "Failed to connect to the poll",
+    });
     actions.stopLoading();
+  });
+
+  socket.on("exception", (error) => {
+    console.log(`Exception: ${JSON.stringify(error)}`);
+    actions.addWsError(error);
   });
 
   socket.on("poll_updated", (poll) => {
