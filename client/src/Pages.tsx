@@ -5,11 +5,13 @@ import { CSSTransition } from "react-transition-group";
 import CreatePoll from "./pages/CreatePoll";
 import JoinPoll from "./pages/JoinPoll";
 import { useSnapshot } from "valtio";
+import WaitingRoom from "./pages/WaitingRoom";
 
 const routeConfig = {
   [AppPage.Welcome]: Welcome,
   [AppPage.CreatePoll]: CreatePoll,
   [AppPage.JoinPoll]: JoinPoll,
+  [AppPage.WaitingRoom]: WaitingRoom,
 };
 
 const Pages: React.FC = () => {
