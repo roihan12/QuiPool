@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
-import { MdCancel } from 'react-icons/md';
-import { CSSTransition } from 'react-transition-group';
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { MdCancel } from "react-icons/md";
+import { CSSTransition } from "react-transition-group";
 
-import styles from './SnackBar.module.css';
+import styles from "./SnackBar.module.css";
 
 type SnackBarProps = {
-  type?: 'standard' | 'error';
+  type?: "standard" | "error";
   title?: string;
   message: string;
   show: boolean;
@@ -15,12 +15,12 @@ type SnackBarProps = {
 };
 
 const snackBarStyles = {
-  standard: 'bg-gray-100 bg-opacity-50',
-  error: 'bg-red-600 text-white',
+  standard: "bg-gray-100 bg-opacity-50",
+  error: "bg-red-600 text-white",
 };
 
 const SnackBar: React.FC<SnackBarProps> = ({
-  type = 'standard',
+  type = "standard",
   title,
   message,
   show,
@@ -35,7 +35,7 @@ const SnackBar: React.FC<SnackBarProps> = ({
   };
 
   useEffect(() => {
-    console.log('snackbar useEffect', title, message, show);
+    console.log("snackbar useEffect", title, message, show);
     if (show) {
       setShowSnackBar(true);
     }

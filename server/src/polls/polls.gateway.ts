@@ -162,7 +162,7 @@ export class PollsGateway
   }
 
   @UseGuards(PollsGatewayAdminGuard)
-  @SubscribeMessage('start_poll')
+  @SubscribeMessage('start_vote')
   async startPoll(@ConnectedSocket() client: SocketWithAuth): Promise<void> {
     this.logger.debug(`Attempting to starting poll: ${client.pollID}`);
     const updatedPoll = await this.pollsService.startPoll(client.pollID);

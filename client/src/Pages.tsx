@@ -6,12 +6,14 @@ import CreatePoll from "./pages/CreatePoll";
 import JoinPoll from "./pages/JoinPoll";
 import { useSnapshot } from "valtio";
 import WaitingRoom from "./pages/WaitingRoom";
+import Voting from "./pages/Voting";
 
 const routeConfig = {
   [AppPage.Welcome]: Welcome,
   [AppPage.CreatePoll]: CreatePoll,
   [AppPage.JoinPoll]: JoinPoll,
   [AppPage.WaitingRoom]: WaitingRoom,
+  [AppPage.Voting]: Voting,
 };
 
 const Pages: React.FC = () => {
@@ -24,6 +26,9 @@ const Pages: React.FC = () => {
       !currentState.poll?.hasStarted
     ) {
       actions.setPage(AppPage.WaitingRoom);
+    }
+    if (currentState.me?.id && currentState.poll?.hasStarted) {
+      actions.setPage(AppPage.Voting);
     }
   }, [currentState.me?.id, currentState.poll, currentState.poll?.hasStarted]);
 
