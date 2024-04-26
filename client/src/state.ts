@@ -12,6 +12,7 @@ export enum AppPage {
   JoinPoll = "join-poll",
   WaitingRoom = "waiting-room",
   Voting = "voting",
+  Results = "results",
 }
 
 type Me = {
@@ -39,6 +40,8 @@ export type AppState = {
   nominationCount: number;
   participantCount: number;
   canStartVote: boolean;
+  hasVoted: boolean;
+  rangkingCount: number;
 };
 
 const state = proxy<AppState>({
@@ -72,6 +75,14 @@ const state = proxy<AppState>({
     const votesPerVoter = this.poll?.votesPerVoter ?? 100;
 
     return this.nominationCount >= votesPerVoter;
+  },
+  get hasVoted() {
+    const rangkings = this.poll?.rangkings || {};
+    const userID = this.me?.id || "";
+    return rangkings[userID] !== undefined ? true : false;
+  },
+  get rangkingCount() {
+    return Object.keys(this.poll?.rangkings || {}).length;
   },
 });
 
@@ -145,6 +156,9 @@ const actions = {
   },
   cancelPoll: (): void => {
     state.socket?.emit("cancel_poll");
+  },
+  closePoll: (): void => {
+    state.socket?.emit("close_poll");
   },
   addWsError: (error: WsError): void => {
     state.wsErrors = [...state.wsErrors, { ...error, id: nanoid(6) }];

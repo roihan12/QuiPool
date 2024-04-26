@@ -73,7 +73,7 @@ const Voting: React.FC = () => {
           message="You Cannot change your vote after submitting"
           showDialog={confirmVotes}
           onCancel={() => setConfirmVotes(false)}
-          onConfirm={actions.submitRankings(rankings)}
+          onConfirm={() => actions.submitRangkings(rankings)}
         />
         {currentState.isAdmin && (
           <>
@@ -84,7 +84,12 @@ const Voting: React.FC = () => {
               Cancel Poll
             </button>
 
-            <ConfirmationDialog message="This will end the poll and kick everyone out" showDialog={confirmCancel} onCancel={() => setConfirmCancel(false)} onConfirm={actions.cancelPoll()}/>
+            <ConfirmationDialog
+              message="This will end the poll and kick everyone out"
+              showDialog={confirmCancel}
+              onCancel={() => setConfirmCancel(false)}
+              onConfirm={() => actions.cancelPoll()}
+            />
           </>
         )}
       </div>
