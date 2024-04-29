@@ -4,16 +4,18 @@ import { useCopyToClipboard } from "react-use";
 import { useSnapshot } from "valtio";
 import { colorizeText } from "../util";
 import { MdContentCopy, MdPeopleOutline } from "react-icons/md";
-import { BsPencilSquare } from "react-icons/bs";
+import { BsChat, BsPencilSquare } from "react-icons/bs";
 import ConfirmationDialog from "../components/ui/ConfirmationDialog";
 import ParticipantList from "../components/ParticipantList";
 import NominationForm from "../components/NominationForm";
+import ChatRoom from "../components/ChatRoom";
 
 const WaitingRoom: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_copiedText, copyToClipboard] = useCopyToClipboard();
   const [isParticipantListOpen, setIsParticipantListOpen] = useState(false);
   const [isFormNominationOpen, setIsFormNominationOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [participantRemoved, setParticipantRemoved] = useState<string>();
@@ -73,6 +75,13 @@ const WaitingRoom: React.FC = () => {
           >
             <BsPencilSquare size={24} />{" "}
             <span>{currentState.nominationCount}</span>
+          </button>
+
+          <button
+            className="box btn-orange mx-2 pulsate"
+            onClick={() => setIsChatOpen(true)}
+          >
+            <BsChat size={24} /> <span>{currentState.chatCount}</span>
           </button>
         </div>
         <div className="flex flex-col justify-center">
@@ -135,6 +144,16 @@ const WaitingRoom: React.FC = () => {
         onRemoveNomination={(nominationID) =>
           actions.removeNomination(nominationID)
         }
+        userID={currentState.me?.id}
+        isAdmin={currentState.isAdmin || false}
+      />
+
+      <ChatRoom
+        title={currentState.poll?.topic}
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        onSubmitChat={(chatText) => actions.chat(chatText)}
+        allMessages={currentState.poll?.chats || {}}
         userID={currentState.me?.id}
         isAdmin={currentState.isAdmin || false}
       />

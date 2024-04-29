@@ -21,7 +21,7 @@ import { Namespace, Socket } from 'socket.io';
 import { SocketWithAuth } from './polls.types';
 import { WsCatchAllFilter } from 'src/exceptions/ws-catch-all-filter';
 import { PollsGatewayAdminGuard } from './polls.gateway-admin.guard';
-import { NominationDto } from './polls.dtos';
+import { ChatDto, NominationDto } from './polls.dtos';
 @UsePipes(new ValidationPipe())
 @UseFilters(new WsCatchAllFilter())
 @WebSocketGateway({
@@ -118,6 +118,25 @@ export class PollsGateway
       pollID: client.pollID,
       userID: client.userID,
       text: nomination.text,
+    });
+
+    this.io.to(client.pollID).emit('poll_updated', updatedPoll);
+  }
+
+  @SubscribeMessage('chat_message')
+  async addChatMessage(
+    @MessageBody() chat: ChatDto,
+    @ConnectedSocket() client: SocketWithAuth,
+  ): Promise<void> {
+    this.logger.debug(
+      `Attempting to add nomination for user ${client.userID} with ${chat.text} to poll ${client.pollID}`,
+    );
+
+    const updatedPoll = await this.pollsService.addChat({
+      pollID: client.pollID,
+      userID: client.userID,
+      name: client.name,
+      text: chat.text,
     });
 
     this.io.to(client.pollID).emit('poll_updated', updatedPoll);

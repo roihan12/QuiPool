@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import {
+  AddChatFields,
   AddNominationFields,
   AddParticipantFields,
   CreatePollFields,
@@ -7,7 +8,12 @@ import {
   RejoinPollFields,
   SubmitRangkingsFields,
 } from './polls.types';
-import { createNominationID, createPollID, createUserID } from 'src/utils/ids';
+import {
+  createChatID,
+  createNominationID,
+  createPollID,
+  createUserID,
+} from 'src/utils/ids';
 import { PollsRepository } from './polls.repository';
 import { JwtService } from '@nestjs/jwt';
 import { Poll } from 'shared';
@@ -162,5 +168,18 @@ export class PollsService {
 
   async cancelPoll(pollID: string): Promise<void> {
     return this.pollsRepository.deletePoll(pollID);
+  }
+
+  async addChat(fields: AddChatFields): Promise<Poll> {
+    return this.pollsRepository.addNewChat({
+      pollID: fields.pollID,
+      chatID: createChatID(),
+      chat: {
+        userID: fields.userID,
+        chat: fields.text,
+        name: fields.name,
+        timestamp: Date.now(),
+      },
+    });
   }
 }

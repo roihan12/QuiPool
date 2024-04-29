@@ -1,4 +1,5 @@
 import {
+  AddChatData,
   AddNominationData,
   AddParticipantData,
   AddParticipantRangkingsData,
@@ -34,6 +35,7 @@ export class PollsRepository {
       votesPerVoter: fields.votesPerVoter,
       participants: {},
       nominations: {},
+      chats: {},
       rangkings: {},
       results: [],
       adminID: fields.userID,
@@ -255,6 +257,29 @@ export class PollsRepository {
     } catch (error) {
       this.logger.error(`Failed to delete poll: ${pollID}`);
       throw new InternalServerErrorException('Failed to delete poll');
+    }
+  }
+
+  async addNewChat({ pollID, chatID, chat }: AddChatData): Promise<Poll> {
+    this.logger.log(
+      `Attempting to add chat with ID: ${chatID}/${chat.chat} to poll: ${pollID}`,
+    );
+    const key = `polls:${pollID}`;
+    const chatPath = `.chats.${chatID}`;
+
+    try {
+      await this.redisClient.send_command(
+        'JSON.SET',
+        key,
+        chatPath,
+        JSON.stringify(chat),
+      );
+      return this.getPoll(pollID);
+    } catch (error) {
+      this.logger.error(
+        `Failed to add chat with ID/name: ${chatID}/${chat.chat} to poll: ${pollID}\n${error}`,
+      );
+      throw new InternalServerErrorException(`Failed to add chat`);
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { Nomination } from 'shared';
+import { Nomination, ChatMessage } from 'shared';
 import { Socket } from 'socket.io';
 
 // service types
@@ -31,6 +31,13 @@ export type AddNominationFields = {
   text: string;
 };
 
+export type AddChatFields = {
+  pollID: string;
+  userID: string;
+  name: string;
+  text: string;
+};
+
 export type SubmitRangkingsFields = {
   pollID: string;
   userID: string;
@@ -55,6 +62,12 @@ export type AddNominationData = {
   pollID: string;
   nominationID: string;
   nomination: Nomination;
+};
+
+export type AddChatData = {
+  pollID: string;
+  chatID: string;
+  chat: ChatMessage;
 };
 
 export type AddParticipantRangkingsData = {

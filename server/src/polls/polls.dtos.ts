@@ -62,3 +62,9 @@ export class NominationDto {
   @Length(1, 100)
   text: string;
 }
+
+export class ChatDto {
+  @IsString()
+  @Length(1, 100)
+  text: string;
+}

@@ -39,6 +39,7 @@ export type AppState = {
   isAdmin: boolean;
   nominationCount: number;
   participantCount: number;
+  chatCount: number;
   canStartVote: boolean;
   hasVoted: boolean;
   rangkingCount: number;
@@ -70,6 +71,9 @@ const state = proxy<AppState>({
   },
   get nominationCount() {
     return Object.keys(this.poll?.nominations || {}).length;
+  },
+  get chatCount() {
+    return Object.keys(this.poll?.chats || {}).length;
   },
   get canStartVote() {
     const votesPerVoter = this.poll?.votesPerVoter ?? 100;
@@ -125,6 +129,11 @@ const actions = {
   },
   nominate: (text: string): void => {
     state.socket?.emit("nominate", {
+      text,
+    });
+  },
+  chat: (text: string): void => {
+    state.socket?.emit("chat_message", {
       text,
     });
   },
