@@ -13,13 +13,27 @@ export class CreateQuizDto {
 
   @ApiProperty({
     minimum: 1,
+    maximum: 200,
+    example: 'Quiz about colors.',
+  })
+  @IsString()
+  @Length(1, 200)
+  description: string;
+
+  @ApiProperty({
+    minimum: 1,
     maximum: 5,
     example: 5,
   })
   @IsInt()
-  @Min(1)
-  @Max(5)
+  @Min(2)
   maxParticipants: number;
+
+  @ApiProperty({})
+  @IsInt()
+  @Min(2)
+  @Max(25)
+  maxQuestions: number;
 
   @ApiProperty({
     minimum: 1,
@@ -66,8 +80,8 @@ export class QuestionDto {
 export class AnswerDto {
   @ApiProperty({})
   @IsString()
-  @Length(8, 8)
-  QuestionID: string;
+  @Length(6, 6)
+  questionID: string;
 
   @ApiProperty({})
   @IsString()
@@ -76,5 +90,24 @@ export class AnswerDto {
 
   @ApiProperty({})
   @IsBoolean()
-  isCorrect: number;
+  isCorrect: boolean;
+}
+
+export class UserAnswerDto {
+  @ApiProperty({})
+  @IsString()
+  questionID: string;
+
+  @ApiProperty({})
+  answerID: string;
+
+  @ApiProperty({})
+  @IsInt()
+  timestamp: number;
+}
+
+export class ChatDto {
+  @IsString()
+  @Length(1, 100)
+  text: string;
 }

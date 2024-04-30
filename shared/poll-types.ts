@@ -16,6 +16,7 @@ export type ChatMessage = {
 
 type NominationID = string;
 type ChatID = string;
+
 export type Nominations = {
   [nominationID: NominationID]: Nomination;
 };

@@ -1,10 +1,13 @@
-import { Answer } from 'shared';
+import { Answer, Question, UserAnswer } from 'shared';
 import { Socket } from 'socket.io';
+import { Request } from 'express';
 
 // service types
 export type CreateQuizFields = {
   topic: string;
   maxParticipants: number;
+  maxQuestions: number;
+  description: string;
   name: string;
 };
 
@@ -32,26 +35,33 @@ export type AddQuestionFields = {
 
 export type AddAnswerFields = {
   quizID: string;
-  userID: string;
+  questionID: string;
   text: string;
+  isCorrect: boolean;
 };
 
 export type AddChatQuizFields = {
- quizID: string;
+  quizID: string;
   userID: string;
   name: string;
   text: string;
 };
-
+export type UserAnswerFields = {
+  quizID: string;
+  userID: string;
+  userAnswer: UserAnswer;
+};
 // repository types
 export type CreateQuizData = {
   quizID: string;
   userID: string;
   topic: string;
   maxParticipants: number;
+  maxQuestions: number;
+  description: string;
 };
 
-export type AddParticipantData = {
+export type AddQuizParticipantData = {
   quizID: string;
   userID: string;
   name: string;
@@ -60,23 +70,19 @@ export type AddParticipantData = {
 export type AddQuestionData = {
   quizID: string;
   questionID: string;
-  text: string;
-  answer: Answer[];
+  question: Question;
 };
 
 export type AddAnswerData = {
   quizID: string;
   questionID: string;
-  answerID: string;
-  text: string;
-  isCorrect: boolean;
+  answer: Answer;
 };
 
 export type UserAnswerData = {
   quizID: string;
   userID: string;
-  questionID: string;
-  answerID: string;
+  userAnswer: UserAnswer;
 };
 
 // Guard types
@@ -86,5 +92,5 @@ export type QuizAuthPayload = {
   name: string;
 };
 
-export type RequestWithAuth = Request & QuizAuthPayload;
-export type SocketWithAuth = Socket & QuizAuthPayload;
+export type RequestQuizWithAuth = Request & QuizAuthPayload;
+export type SocketQuizWithAuth = Socket & QuizAuthPayload;

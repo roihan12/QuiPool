@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Server, ServerOptions } from 'socket.io';
 import { SocketWithAuth } from 'src/polls/polls.types';
+import { SocketQuizWithAuth } from 'src/quizs/quizs.types';
 
 export class SocketIOAdapter extends IoAdapter {
   private readonly logger = new Logger(SocketIOAdapter.name);
@@ -36,6 +37,7 @@ export class SocketIOAdapter extends IoAdapter {
     const server: Server = super.createIOServer(port, optionsWithCORS);
 
     server.of('polls').use(createTokenMiddleware(jwtService, this.logger));
+    server.of('quizs').use(createTokenQuizMiddleware(jwtService, this.logger));
 
     return server;
   }
@@ -53,6 +55,25 @@ const createTokenMiddleware =
       const payload = jwtService.verify(token);
       socket.userID = payload.sub;
       socket.pollID = payload.pollID;
+      socket.name = payload.name;
+      next();
+    } catch (error) {
+      next(new Error('FORBIDDEN'));
+    }
+  };
+
+const createTokenQuizMiddleware =
+  (jwtService: JwtService, logger: Logger) =>
+  (socket: SocketQuizWithAuth, next) => {
+    const token =
+      socket.handshake.auth.token || socket.handshake.headers['token'];
+
+    logger.debug(`Validating auth token before connection: ${token}`);
+
+    try {
+      const payload = jwtService.verify(token);
+      socket.userID = payload.sub;
+      socket.quizID = payload.quizID;
       socket.name = payload.name;
       next();
     } catch (error) {

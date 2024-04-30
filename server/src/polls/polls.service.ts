@@ -68,6 +68,11 @@ export class PollsService {
     );
 
     const joinedPoll = await this.pollsRepository.getPoll(fields.pollID);
+
+    if (!joinedPoll) {
+      throw new BadRequestException('Poll not found');
+    }
+
     this.logger.debug(
       `Creating token string for pollID: ${joinedPoll.id} and userID: ${userID}`,
     );
