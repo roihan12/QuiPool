@@ -22,6 +22,7 @@ import { SocketWithAuth } from './polls.types';
 import { WsCatchAllFilter } from 'src/exceptions/ws-catch-all-filter';
 import { PollsGatewayAdminGuard } from './polls.gateway-admin.guard';
 import { ChatDto, NominationDto } from './polls.dtos';
+import { WsNotFoundException } from 'src/exceptions/ws-exceptions';
 @UsePipes(new ValidationPipe())
 @UseFilters(new WsCatchAllFilter())
 @WebSocketGateway({
@@ -46,6 +47,15 @@ export class PollsGateway
       `Socket connectted with userID: ${client.userID}, PollID: ${client.pollID}, name: ${client.name}`,
     );
     this.logger.debug(`Number of connected clients: ${sockets.size}`);
+
+    if (client.pollID === undefined) {
+      this.logger.debug(
+        `Invalid pollID for userID: ${client.userID}, Connection terminated.`,
+      );
+      client.emit('exception', new WsNotFoundException("Invalid pollID")); // Send error message to client
+      client.disconnect(); // Terminate connection if pollID is undefined
+      return;
+    }
 
     const roomName = client.pollID;
     await client.join(roomName);

@@ -56,7 +56,7 @@ const CreatePoll: React.FC = () => {
     actions.stopLoading();
   };
   return (
-    <div className="flex flex-col w-full justify-around items-stretch h-full mx-auto max-w-sm">
+    <div className="flex flex-col w-full justify-around items-stretch h-full mx-auto max-w-sm pt-12">
       <div className="mb-12">
         <h3 className="text-center">Enter Poll Topic</h3>
         <div className="text-center w-full">

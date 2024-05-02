@@ -68,7 +68,7 @@ const createTokenQuizMiddleware =
     const token =
       socket.handshake.auth.token || socket.handshake.headers['token'];
 
-    logger.debug(`Validating auth token before connection: ${token}`);
+    logger.debug(`Validating auth token quiz before connection: ${token}`);
 
     try {
       const payload = jwtService.verify(token);

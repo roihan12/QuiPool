@@ -94,6 +94,7 @@ export class PollsRepository {
     this.logger.log(
       `Attempting to add participant with userID/name: ${fields.userID}/${fields.name} to poll: ${fields.pollID}`,
     );
+
     const key = `polls:${fields.pollID}`;
     const participantPath = `.participants.${fields.userID}`;
 

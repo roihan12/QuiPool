@@ -47,7 +47,7 @@ export class QuizsService {
     });
 
     this.logger.debug(
-      `Creating token string for pollID: ${createdQuiz.id} and userID: ${userID}`,
+      `Creating token string for quizID: ${createdQuiz.id} and userID: ${userID}`,
     );
 
     const signedToken = this.jwtService.sign(

@@ -27,6 +27,7 @@ export class CreateQuizDto {
   })
   @IsInt()
   @Min(2)
+  @Max(20)
   maxParticipants: number;
 
   @ApiProperty({})

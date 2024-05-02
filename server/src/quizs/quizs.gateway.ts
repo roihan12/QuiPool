@@ -21,6 +21,7 @@ import { SocketQuizWithAuth } from './quizs.types';
 import { AnswerDto, ChatDto, QuestionDto, UserAnswerDto } from './quizs.dtos';
 import { QuizsService } from './quizs.service';
 import { QuizsGatewayAdminGuard } from './quizs.gateway-admin.guard';
+import { WsNotFoundException } from 'src/exceptions/ws-exceptions';
 
 @UsePipes(new ValidationPipe())
 @UseFilters(new WsCatchAllFilter())
@@ -46,6 +47,14 @@ export class QuizsGateway
       `Socket connectted with userID: ${client.userID}, Quiz: ${client.quizID}, name: ${client.name}`,
     );
     this.logger.debug(`Number of connected clients: ${sockets.size}`);
+    if (client.quizID === undefined) {
+      this.logger.debug(
+        `Invalid pollID for userID: ${client.userID}, Connection terminated.`,
+      );
+      client.emit('exception', new WsNotFoundException('Invalid quizID')); // Send error message to client
+      client.disconnect(); // Terminate connection if pollID is undefined
+      return;
+    }
 
     const roomName = client.quizID;
     await client.join(roomName);

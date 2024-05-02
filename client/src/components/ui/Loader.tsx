@@ -1,20 +1,20 @@
-import React from 'react';
-import classes from './Loader.module.css';
+import React from "react";
+import classes from "./Loader.module.css";
 
 type LoaderProps = {
-  color: 'blue' | 'orange' | 'purple';
+  color: "blue" | "orange" | "purple";
   isLoading: boolean;
   width?: number;
 };
 
 const colorStyles = {
-  blue: 'bg-blue',
-  orange: 'bg-orange',
-  purple: 'bg-purple',
+  blue: "bg-blue",
+  orange: "bg-orange",
+  purple: "bg-purple",
 };
 
 const Loader: React.FC<LoaderProps> = ({ color, isLoading, width = 80 }) => {
-  const colorStyle = colorStyles[color] || 'bg-purple';
+  const colorStyle = colorStyles[color] || "bg-purple";
 
   const d = width / 7;
 

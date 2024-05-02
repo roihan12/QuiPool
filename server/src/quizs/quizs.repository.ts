@@ -107,7 +107,7 @@ export class QuizsRepository {
       return this.getQuiz(fields.quizID);
     } catch (error) {
       this.logger.error(
-        `Failed to add quiz participant with userID/name: ${fields.userID}/${fields.name} to poll: ${fields.quizID}\n${error}`,
+        `Failed to add quiz participant with userID/name: ${fields.userID}/${fields.name} to quiz: ${fields.quizID}\n${error}`,
       );
 
       throw new InternalServerErrorException(`Failed to add quiz participant`);
@@ -116,7 +116,7 @@ export class QuizsRepository {
 
   async removeQuizParticipant(quizID: string, userID: string): Promise<Quiz> {
     this.logger.log(
-      `Attempting to remove quiz participant with userID/name: ${userID} from poll: ${quizID}`,
+      `Attempting to remove quiz participant with userID/name: ${userID} from quiz: ${quizID}`,
     );
 
     const key = `quizs:${quizID}`;
@@ -128,7 +128,7 @@ export class QuizsRepository {
       return this.getQuiz(quizID);
     } catch (error) {
       this.logger.error(
-        `Failed to remove quiz participant with userID/name: ${userID} from poll: ${quizID}\n${error}`,
+        `Failed to remove quiz participant with userID/name: ${userID} from quiz: ${quizID}\n${error}`,
       );
       throw new InternalServerErrorException(
         'Failed to remove quiz participant',
@@ -160,7 +160,7 @@ export class QuizsRepository {
 
   async removeQuestion(quizID: string, questionID: string): Promise<Quiz> {
     this.logger.log(
-      `Attempting to remove question with ID/name: ${questionID} from poll: ${quizID}`,
+      `Attempting to remove question with ID/name: ${questionID} from quiz: ${quizID}`,
     );
     const key = `quizs:${quizID}`;
     const questionPath = `.questions.${questionID}`;
@@ -170,7 +170,7 @@ export class QuizsRepository {
       return this.getQuiz(quizID);
     } catch (error) {
       this.logger.error(
-        `Failed to remove question with ID/name: ${questionID} from poll: ${quizID}\n${error}`,
+        `Failed to remove question with ID/name: ${questionID} from quiz: ${quizID}\n${error}`,
       );
       throw new InternalServerErrorException('Failed to remove question');
     }
@@ -217,7 +217,7 @@ export class QuizsRepository {
       return this.getQuiz(quizID);
     } catch (error) {
       this.logger.error(
-        `Failed to remove answer with ID/name: ${answerID} from question with ID/name: ${questionID} from poll: ${quizID}\n${error}`,
+        `Failed to remove answer with ID/name: ${answerID} from question with ID/name: ${questionID} from quiz: ${quizID}\n${error}`,
       );
       throw new InternalServerErrorException(
         'Failed to remove answer from question',
@@ -285,7 +285,7 @@ export class QuizsRepository {
   }
 
   async deleteQuiz(quizID: string): Promise<void> {
-    this.logger.log(`Attempting to delete poll: ${quizID}`);
+    this.logger.log(`Attempting to delete quiz: ${quizID}`);
     const key = `quizs:${quizID}`;
     try {
       await this.redisClient.send_command('JSON.DEL', key);
