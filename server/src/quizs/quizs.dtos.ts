@@ -78,6 +78,24 @@ export class QuestionDto {
   text: string;
 }
 
+export class QuestionAnswerDto {
+  @IsString()
+  @Length(1, 200)
+  question: string;
+  answersOptions: AnswerOptionDto[];
+}
+
+export class AnswerOptionDto {
+  @ApiProperty({})
+  @IsString()
+  @Length(1, 100)
+  option: string;
+
+  @ApiProperty({})
+  @IsBoolean()
+  isCorrect: boolean;
+}
+
 export class AnswerDto {
   @ApiProperty({})
   @IsString()

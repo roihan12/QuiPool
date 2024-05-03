@@ -47,3 +47,16 @@ export const joinQuiz = z.object({
       message: "Name must be at most 25 characters long",
     }),
 });
+
+
+const AnswerOptionSchema = z.object({
+  option: z.string(),
+  isCorrect: z.boolean(),
+});
+
+export const QuestionSchema = z.object({
+  question: z.string(),
+  answersOptions: z.array(AnswerOptionSchema),
+});
+
+

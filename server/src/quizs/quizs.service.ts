@@ -11,6 +11,7 @@ import {
   AddChatQuizFields,
   AddParticipantQuizFields,
   AddQuestionFields,
+  AddQuestionWithAnswerFields,
   CreateQuizFields,
   JoinQuizFields,
   RejoinQuizFields,
@@ -157,6 +158,37 @@ export class QuizsService {
         text: fields.text,
         userID: fields.userID,
         answers: {},
+      },
+    });
+  }
+
+  async addQuestionWithAnswers(
+    fields: AddQuestionWithAnswerFields,
+  ): Promise<Quiz> {
+    this.logger.debug(`Adding question: ${JSON.stringify(fields, null, 2)}`);
+
+    // Dapatkan kuis yang akan ditambahkan pertanyaan
+    const quiz = await this.quizsRepository.getQuiz(fields.quizID);
+
+    // Periksa apakah jumlah pertanyaan sudah mencapai batas maksimum
+    if (Object.keys(quiz.questions).length >= quiz.maxQuestions) {
+      throw new BadRequestException('Maximum number of questions reached');
+    }
+
+    // Jika belum, tambahkan pertanyaan baru
+    const id = createQuestionID();
+    return this.quizsRepository.addQuestionWithAnswers({
+      quizID: fields.quizID,
+      questionID: id,
+      question: {
+        id,
+        text: fields.text,
+        userID: fields.userID,
+        answers: fields.answers.map((answer) => ({
+          id: createAnswerID(),
+          text: answer.text,
+          isCorrect: answer.isCorrect,
+        })),
       },
     });
   }

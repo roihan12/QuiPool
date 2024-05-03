@@ -11,6 +11,7 @@ import { AddQuizChatData, Quiz, QuizResult } from 'shared';
 import {
   AddAnswerData,
   AddQuestionData,
+  AddQuestionWithAnswerData,
   AddQuizParticipantData,
   CreateQuizData,
   UserAnswerData,
@@ -174,6 +175,30 @@ export class QuizsRepository {
       );
       throw new InternalServerErrorException('Failed to remove question');
     }
+  }
+
+  async addQuestionWithAnswers(
+    fields: AddQuestionWithAnswerData,
+  ): Promise<Quiz> {
+    this.logger.log(
+      `Attempting to add question with ID/name: ${fields.questionID}/${fields.question.text} with answers ${fields.question.answers} to quiz: ${fields.quizID}`,
+    );
+
+     const key = `quizs:${fields.quizID}`;
+     const questionPath = `.questions.${fields.questionID}`;
+
+     try {
+       await this.redisClient.send_command(
+         'JSON.SET',
+         key,
+         questionPath,
+         JSON.stringify(fields.question),
+       );
+       return this.getQuiz(fields.quizID);
+     } catch (error) {
+       this.logger.error(`Failed to add question to quiz: ${fields.quizID}`);
+       throw new InternalServerErrorException('Failed to add question');
+     }
   }
 
   async addAnswer(fields: AddAnswerData): Promise<Quiz> {

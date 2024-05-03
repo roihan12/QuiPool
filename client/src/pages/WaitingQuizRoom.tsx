@@ -4,18 +4,20 @@ import { useCopyToClipboard } from "react-use";
 import { useSnapshot } from "valtio";
 import { colorizeText } from "../util";
 import { MdContentCopy, MdPeopleOutline } from "react-icons/md";
-import { BsChat, BsPencilSquare } from "react-icons/bs";
+import { BsChat, BsListCheck, BsPencilSquare } from "react-icons/bs";
 import ConfirmationDialog from "../components/ui/ConfirmationDialog";
 import ParticipantList from "../components/ParticipantList";
-import NominationForm from "../components/NominationForm";
 import ChatRoom from "../components/ChatRoom";
+import QuizForm from "@/components/QuizForm";
+import ListQuiz from "@/components/ListQuiz";
 
 const WaitingQuizRoom: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_copiedText, copyToClipboard] = useCopyToClipboard();
   const [isParticipantListOpen, setIsParticipantListOpen] = useState(false);
-  const [isFormNominationOpen, setIsFormNominationOpen] = useState(false);
+  const [isFormQuizOpen, setIsFormQuizOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isListQuizOpen, setIsListQuizOpen] = useState(false);
   const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [participantRemoved, setParticipantRemoved] = useState<string>();
@@ -71,10 +73,9 @@ const WaitingQuizRoom: React.FC = () => {
 
           <button
             className="box border-violet-500 mx-2 pulsate"
-            onClick={() => setIsFormNominationOpen(true)}
+            onClick={() => setIsFormQuizOpen(true)}
           >
-            <BsPencilSquare size={24} />{" "}
-            <span>{currentState.nominationCount}</span>
+            <BsPencilSquare size={24} /> <span>{currentState.quizCount}</span>
           </button>
 
           <button
@@ -83,18 +84,26 @@ const WaitingQuizRoom: React.FC = () => {
           >
             <BsChat size={24} /> <span>{currentState.chatCount}</span>
           </button>
+
+          {currentState.isQuizAdmin && (
+            <button
+              className="box btn-orange mx-2 pulsate"
+              onClick={() => setIsListQuizOpen(true)}
+            >
+              <BsListCheck size={24} /> <span>{currentState.quizCount}</span>
+            </button>
+          )}
         </div>
         <div className="flex flex-col justify-center">
-          {currentState.isAdmin ? (
+          {currentState.isQuizAdmin ? (
             <>
               <div className="my-2 italic">
-                {currentState.poll?.votesPerVoter} Nominations Required to
-                Start!
+                {currentState.quiz?.maxQuestions} Question Required to Start!
               </div>
               <button
                 className="box btn-orange my-2"
-                disabled={!currentState.canStartVote}
-                onClick={() => actions.startVote()}
+                disabled={!currentState.canStartQuiz}
+                onClick={() => actions.startQuiz()}
               >
                 Start Quiz
               </button>
@@ -133,19 +142,11 @@ const WaitingQuizRoom: React.FC = () => {
         isAdmin={currentState.isAdmin || false}
       />
 
-      <NominationForm
-        title={currentState.poll?.topic}
-        isOpen={isFormNominationOpen}
-        onClose={() => setIsFormNominationOpen(false)}
-        onSubmitNomination={(nominationText) =>
-          actions.nominate(nominationText)
-        }
-        nominations={currentState.poll?.nominations || {}}
-        onRemoveNomination={(nominationID) =>
-          actions.removeNomination(nominationID)
-        }
-        userID={currentState.me?.id}
-        isAdmin={currentState.isAdmin || false}
+      <QuizForm
+        title={currentState.quiz?.topic}
+        isOpen={isFormQuizOpen}
+        onClose={() => setIsFormQuizOpen(false)}
+        onSubmitQuestion={(question) => actions.submitQuiz(question)}
       />
 
       <ChatRoom
@@ -156,6 +157,13 @@ const WaitingQuizRoom: React.FC = () => {
         allMessages={currentState.quiz?.chats || {}}
         userID={currentState.meQuiz?.id}
         isAdmin={currentState.isAdmin || false}
+      />
+
+      <ListQuiz
+        topic={currentState.quiz?.topic}
+        isOpen={isListQuizOpen}
+        onClose={() => setIsListQuizOpen(false)}
+        questions={currentState.quiz?.questions || {}}
       />
 
       <ConfirmationDialog

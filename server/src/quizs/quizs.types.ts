@@ -1,4 +1,4 @@
-import { Answer, Question, UserAnswer } from 'shared';
+import { Answer, Question, QuestionWithAnswers, UserAnswer } from 'shared';
 import { Socket } from 'socket.io';
 import { Request } from 'express';
 
@@ -33,9 +33,21 @@ export type AddQuestionFields = {
   text: string;
 };
 
+export type AddQuestionWithAnswerFields = {
+  quizID: string;
+  userID: string;
+  text: string;
+  answers: AddQusetionAnswerFields[];
+};
+
 export type AddAnswerFields = {
   quizID: string;
   questionID: string;
+  text: string;
+  isCorrect: boolean;
+};
+
+export type AddQusetionAnswerFields = {
   text: string;
   isCorrect: boolean;
 };
@@ -71,6 +83,12 @@ export type AddQuestionData = {
   quizID: string;
   questionID: string;
   question: Question;
+};
+
+export type AddQuestionWithAnswerData = {
+  quizID: string;
+  questionID: string;
+  question: QuestionWithAnswers;
 };
 
 export type AddAnswerData = {

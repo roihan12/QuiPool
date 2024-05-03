@@ -18,7 +18,13 @@ import {
 import { Namespace } from 'socket.io';
 import { WsCatchAllFilter } from 'src/exceptions/ws-catch-all-filter';
 import { SocketQuizWithAuth } from './quizs.types';
-import { AnswerDto, ChatDto, QuestionDto, UserAnswerDto } from './quizs.dtos';
+import {
+  AnswerDto,
+  ChatDto,
+  QuestionAnswerDto,
+  QuestionDto,
+  UserAnswerDto,
+} from './quizs.dtos';
 import { QuizsService } from './quizs.service';
 import { QuizsGatewayAdminGuard } from './quizs.gateway-admin.guard';
 import { WsNotFoundException } from 'src/exceptions/ws-exceptions';
@@ -133,6 +139,28 @@ export class QuizsGateway
       quizID: client.quizID,
       userID: client.userID,
       text: question.text,
+    });
+
+    this.io.to(client.quizID).emit('quiz_updated', updatedQuiz);
+  }
+
+  @SubscribeMessage('question_with_answer')
+  async addQuestionWithAnswer(
+    @MessageBody() questionWithAnswerOption: QuestionAnswerDto,
+    @ConnectedSocket() client: SocketQuizWithAuth,
+  ): Promise<void> {
+    this.logger.debug(
+      `Attempting to add question for user ${client.userID} with ${questionWithAnswerOption} to quiz ${client.quizID}`,
+    );
+
+    const updatedQuiz = await this.quizsService.addQuestionWithAnswers({
+      quizID: client.quizID,
+      userID: client.userID,
+      text: questionWithAnswerOption.question,
+      answers: questionWithAnswerOption.answersOptions.map((answer) => ({
+        text: answer.option,
+        isCorrect: answer.isCorrect,
+      })),
     });
 
     this.io.to(client.quizID).emit('quiz_updated', updatedQuiz);

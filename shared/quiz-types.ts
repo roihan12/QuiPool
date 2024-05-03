@@ -21,6 +21,13 @@ export type Question = {
   answers: Answers;
 };
 
+export type QuestionWithAnswers = {
+  id: string;
+  userID: string;
+  text: string;
+  answers: Answer[];
+};
+
 export type UserAnswer = {
   questionId: string;
   answerId: string;
@@ -29,6 +36,10 @@ export type UserAnswer = {
 
 export type Questions = {
   [questionID: QuestionID]: Question;
+};
+
+export type QuestionsAnswers = {
+  [questionID: QuestionID]: QuestionWithAnswers;
 };
 
 export type ListUserAnswers = {
@@ -56,7 +67,7 @@ export type Quiz = {
   participants: Participants;
   adminID: string;
   description: string;
-  questions: Questions;
+  questions: QuestionsAnswers;
   userAnswers: ListUserAnswers;
   chats: AllMessages;
   results: QuizResults;

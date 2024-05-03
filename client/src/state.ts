@@ -35,6 +35,22 @@ type WsError = {
   message: string;
 };
 
+interface AnswerOption {
+  option: string;
+  isCorrect: boolean;
+}
+
+export interface QuestionProps {
+  question: string;
+  answersOptions: AnswerOption[];
+}
+
+export interface AnswerUserProps {
+  questionID: string;
+  answerID: string;
+  timestamp: number;
+}
+
 type WsErrorUnique = WsError & {
   id: string;
 };
@@ -50,11 +66,14 @@ export type AppState = {
   me?: Me;
   meQuiz?: Me;
   isAdmin: boolean;
+  isQuizAdmin: boolean;
   nominationCount: number;
+  quizCount: number;
   participantCount: number;
   participantQuizCount: number;
   chatCount: number;
   canStartVote: boolean;
+  canStartQuiz: boolean;
   hasVoted: boolean;
   hasAnswered: boolean;
   rangkingCount: number;
@@ -92,6 +111,12 @@ const state = proxy<AppState>({
     }
     return this.me?.id === this.poll?.adminID;
   },
+  get isQuizAdmin() {
+    if (!this.meQuiz) {
+      return false;
+    }
+    return this.meQuiz?.id === this.quiz?.adminID;
+  },
   get participantCount() {
     return Object.keys(this.poll?.participants || {}).length;
   },
@@ -101,6 +126,9 @@ const state = proxy<AppState>({
   get nominationCount() {
     return Object.keys(this.poll?.nominations || {}).length;
   },
+  get quizCount() {
+    return Object.keys(this.quiz?.questions || {}).length;
+  },
   get chatCount() {
     return Object.keys(this.poll?.chats || {}).length;
   },
@@ -108,6 +136,11 @@ const state = proxy<AppState>({
     const votesPerVoter = this.poll?.votesPerVoter ?? 100;
 
     return this.nominationCount >= votesPerVoter;
+  },
+  get canStartQuiz() {
+    const maxQuestion = this.quiz?.maxQuestions ?? 100;
+
+    return this.quizCount >= maxQuestion;
   },
   get hasVoted() {
     const rangkings = this.poll?.rangkings || {};
@@ -193,6 +226,9 @@ const actions = {
       text,
     });
   },
+  submitQuiz: (quiz: QuestionProps): void => {
+    state.socket?.emit("question_with_answer", quiz);
+  },
   chat: (text: string): void => {
     state.socket?.emit("chat_message", {
       text,
@@ -227,8 +263,14 @@ const actions = {
   startVote: (): void => {
     state.socket?.emit("start_vote");
   },
+  startQuiz: (): void => {
+    state.socket?.emit("start_quiz");
+  },
   submitRangkings: (rangkings: string[]): void => {
     state.socket?.emit("submit_rangkings", { rangkings });
+  },
+  submitUserQuiz: (answerUser: AnswerUserProps): void => {
+    state.socket?.emit("submit_user_answer", {answerUser});
   },
   cancelPoll: (): void => {
     state.socket?.emit("cancel_poll");

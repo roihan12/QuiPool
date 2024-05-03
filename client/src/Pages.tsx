@@ -11,6 +11,7 @@ import Results from "./pages/Results";
 import Navbar from "./components/Navbar";
 import CreateQuiz from "./pages/CreateQuiz";
 import WaitingQuizRoom from "./pages/WaitingQuizRoom";
+import Quiz from "./pages/Quiz";
 
 const routeConfig = {
   [AppPage.Welcome]: Welcome,
@@ -20,6 +21,7 @@ const routeConfig = {
   [AppPage.WaitingRoom]: WaitingRoom,
   [AppPage.WaitingQuizRoom]: WaitingQuizRoom,
   [AppPage.Voting]: Voting,
+  [AppPage.Quiz]: Quiz,
   [AppPage.Results]: Results,
 };
 
