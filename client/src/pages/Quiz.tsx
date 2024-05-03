@@ -6,9 +6,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { differenceInSeconds } from "date-fns";
 import { checkAnswerSchema } from "@/schemas/question";
-import { formatTimeDelta } from "@/lib/utils";
+import { useTimer } from "@/lib/utils";
 import { z } from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useSnapshot } from "valtio";
@@ -24,8 +23,8 @@ const Quiz: React.FC = () => {
   const [questionIndex, setQuestionIndex] = React.useState(0);
   const [hasEnded, setHasEnded] = React.useState(false);
   const [selectedChoice, setSelectedChoice] = React.useState<number>(0);
-  const [now, setNow] = React.useState(new Date());
-  const endTime = now.getTime() + 20 * 1000;
+
+  const [targetTime, setTargetTime] = React.useState(Date.now() + 10 * 1000);
 
   const currentQuestionID = React.useMemo(() => {
     return Object.keys(currentState.quiz?.questions || {})[questionIndex];
@@ -49,24 +48,22 @@ const Quiz: React.FC = () => {
 
   const { toast } = useToast();
 
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      if (!hasEnded) {
-        setNow(new Date());
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [hasEnded]);
-
   const handleNext = React.useCallback(() => {
     actions.startLoading();
-    const payload: z.infer<typeof checkAnswerSchema> = {
-      questionID: currentQuestion?.id ?? "",
-      answerID: options[selectedChoice].id,
-      timestamp: now.getTime(),
-    };
-    console.log(payload);
-    actions.submitUserQuiz(payload);
+    if (!currentQuestion) {
+      // Stop proses jika sudah habis
+      return;
+    }
+    // Periksa apakah selectedChoice telah terdefinisi
+    if (selectedChoice !== undefined && options[selectedChoice] !== undefined) {
+      const payload: z.infer<typeof checkAnswerSchema> = {
+        questionID: currentQuestion?.id ?? "",
+        answerID: options[selectedChoice].id,
+        timestamp: Date.now(),
+      };
+      console.log(payload);
+      actions.submitUserQuiz(payload);
+    }
     setQuestionIndex((questionIndex) => questionIndex + 1);
     toast({
       title: "Correct",
@@ -74,12 +71,18 @@ const Quiz: React.FC = () => {
       variant: "default",
     });
     actions.stopLoading();
-  }, [currentQuestion?.id, toast, now, options, selectedChoice]);
+  }, [toast, options, selectedChoice, currentQuestion]);
+
+  React.useEffect(() => {
+    setTargetTime(Date.now() + 10 * 1000); // Atur kembali waktu target ke 2 menit
+  }, [questionIndex]);
+
+  const timeLeft = useTimer(targetTime);
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key;
-
+      console.log(key);
       if (key === "1") {
         setSelectedChoice(0);
       } else if (key === "2") {
@@ -89,7 +92,15 @@ const Quiz: React.FC = () => {
       } else if (key === "4") {
         setSelectedChoice(3);
       } else if (key === "Enter") {
-        handleNext();
+        // Periksa apakah waktu masih tersisa sebelum memanggil handleNext
+        if (
+          timeLeft.days === "00" &&
+          timeLeft.hours === "00" &&
+          timeLeft.minutes === "00" &&
+          timeLeft.seconds === "00"
+        ) {
+          handleNext();
+        }
       }
     };
 
@@ -98,7 +109,19 @@ const Quiz: React.FC = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleNext]);
+  }, [handleNext, timeLeft]);
+
+  React.useEffect(() => {
+    // Jika waktu telah habis (semua bagian waktu adalah "00"), jalankan handleNext
+    if (
+      timeLeft.days === "00" &&
+      timeLeft.hours === "00" &&
+      timeLeft.minutes === "00" &&
+      timeLeft.seconds === "00"
+    ) {
+      handleNext();
+    }
+  }, [timeLeft]);
 
   return (
     <div className="absolute -translate-x-1/2 -translate-y-1/2 md:w-[25vw] max-w-4xl w-[90vw] top-1/2 left-1/2">
@@ -112,8 +135,8 @@ const Quiz: React.FC = () => {
             </span>
           </p>
           <div className="flex self-start mt-3 text-slate-400">
-            <MdOutlineTimer className="mr-2" />
-            {formatTimeDelta(differenceInSeconds(now, endTime))}
+            <MdOutlineTimer size={24} className="mr-2" />
+            {timeLeft.hours}:{timeLeft.minutes}:{timeLeft.seconds}
           </div>
         </div>
       </div>
