@@ -12,16 +12,20 @@ import Navbar from "./components/Navbar";
 import CreateQuiz from "./pages/CreateQuiz";
 import WaitingQuizRoom from "./pages/WaitingQuizRoom";
 import Quiz from "./pages/Quiz";
+import JoinQuiz from "./pages/JoinQuiz";
+import ResultsQuiz from "./pages/ResultsQuiz";
 
 const routeConfig = {
   [AppPage.Welcome]: Welcome,
   [AppPage.CreatePoll]: CreatePoll,
   [AppPage.CreateQuiz]: CreateQuiz,
   [AppPage.JoinPoll]: JoinPoll,
+  [AppPage.JoinQuiz]: JoinQuiz,
   [AppPage.WaitingRoom]: WaitingRoom,
   [AppPage.WaitingQuizRoom]: WaitingQuizRoom,
   [AppPage.Voting]: Voting,
   [AppPage.Quiz]: Quiz,
+  [AppPage.QuizResults]: ResultsQuiz,
   [AppPage.Results]: Results,
 };
 
@@ -58,6 +62,8 @@ const Pages: React.FC = () => {
     if (currentState.meQuiz?.id && currentState.hasAnswered) {
       actions.setPage(AppPage.QuizResults);
     }
+
+    console.log(currentState.hasAnswered);
   }, [
     currentState.me?.id,
     currentState.meQuiz?.id,

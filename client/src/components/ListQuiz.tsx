@@ -4,6 +4,8 @@ import { QuestionWithAnswers, QuestionsAnswers } from "shared/quiz-types";
 import { Button } from "./ui/button";
 import BottomSheet, { BottemSheetProps } from "./ui/BottomSheet";
 import { string } from "zod";
+import { MdCancel } from "react-icons/md";
+import { actions } from "@/state";
 
 type Props = {
   topic?: string;
@@ -44,6 +46,11 @@ const ListQuiz = (props: Props) => {
                     <CardDescription className="flex-grow text-lg">
                       {question.text}
                     </CardDescription>
+                    <MdCancel
+                      className="fill-current cursor-pointer hover:opacity-80"
+                      onClick={() => actions.removeQuestion(questionID)}
+                      size={24}
+                    />
                   </CardHeader>
                 </Card>
                 <div className="flex flex-col items-center justify-center w-full mt-4">

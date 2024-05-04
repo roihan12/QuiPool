@@ -30,6 +30,8 @@ export default (quiz: Quiz): QuizResult[] => {
     }
   }
 
+  quizResults.sort((a, b) => b.score - a.score);
+
   return quizResults;
 };
 
@@ -42,16 +44,24 @@ function calculateUserScore(userAnswers: any[], questions: any): number {
     const questionID = userAnswer.questionId;
     const answerID = userAnswer.answerId;
 
-    // Dapatkan pertanyaan yang sesuai dengan jawaban pengguna
+    // Dapatkan pertanyaan yang sesuai dengan ID
     const question = questions[questionID];
 
     // Pastikan pertanyaan ada dan jawaban diberikan oleh pengguna
-    if (question && question.answers && question.answers[answerID]) {
-      const userAnswerIsCorrect = question.answers[answerID].isCorrect;
+    if (question && question.answers) {
+      // Dapatkan jawaban yang dipilih oleh pengguna
+      const userSelectedAnswer = question.answers.find(
+        (answer: any) => answer.id === answerID,
+      );
 
-      // Jika jawaban benar, tambahkan skor maksimum per pertanyaan
-      if (userAnswerIsCorrect) {
-        totalScore += maxScorePerQuestion;
+      // Pastikan jawaban yang dipilih ada
+      if (userSelectedAnswer) {
+        const userAnswerIsCorrect = userSelectedAnswer.isCorrect;
+
+        // Jika jawaban benar, tambahkan skor maksimum per pertanyaan
+        if (userAnswerIsCorrect) {
+          totalScore += maxScorePerQuestion;
+        }
       }
     }
   }

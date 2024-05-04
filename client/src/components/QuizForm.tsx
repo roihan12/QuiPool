@@ -87,7 +87,7 @@ const QuizForm: React.FC<QuizFormProps> = ({
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="w-full space-y-6"
               >
-                <div className="space-y-4 h-[500px] overflow-y-auto">
+                <div className="space-y-4 overflow-y-auto md:h-72 lg:h-[280px]">
                   <FormField
                     control={form.control}
                     name="question"

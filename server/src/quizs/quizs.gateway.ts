@@ -275,15 +275,17 @@ export class QuizsGateway
     this.io.to(client.quizID).emit('quiz_updated', updatedQuiz);
   }
 
-  //   @UseGuards(QuizsGatewayAdminGuard)
-  //   @SubscribeMessage('close_quiz')
-  //   async closePoll(@ConnectedSocket() client: SocketQuizWithAuth): Promise<void> {
-  //     this.logger.debug(`Closing quiz: ${client.quizID} and computing results`);
+  @UseGuards(QuizsGatewayAdminGuard)
+  @SubscribeMessage('close_quiz')
+  async closeQuiz(
+    @ConnectedSocket() client: SocketQuizWithAuth,
+  ): Promise<void> {
+    this.logger.debug(`Closing quiz: ${client.quizID} and showing results`);
 
-  //     const updatedQuiz = await this.quizsService.computeResults(client.pollID);
+    const updatedQuiz = await this.quizsService.getQuiz(client.quizID);
 
-  //     this.io.to(client.pollID).emit('quiz_updated', updatedQuiz);
-  //   }
+    this.io.to(client.quizID).emit('quiz_updated', updatedQuiz);
+  }
 
   @UseGuards(QuizsGatewayAdminGuard)
   @SubscribeMessage('cancel_quiz')

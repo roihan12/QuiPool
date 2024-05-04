@@ -17,6 +17,7 @@ export enum AppPage {
   CreatePoll = "create-poll",
   CreateQuiz = "create-quiz",
   JoinPoll = "join-poll",
+  JoinQuiz = "join-quiz",
   WaitingRoom = "waiting-room",
   WaitingQuizRoom = "waiting-quiz-room",
   Voting = "voting",
@@ -72,11 +73,13 @@ export type AppState = {
   participantCount: number;
   participantQuizCount: number;
   chatCount: number;
+  chatQuizCount: number;
   canStartVote: boolean;
   canStartQuiz: boolean;
   hasVoted: boolean;
   hasAnswered: boolean;
   rangkingCount: number;
+  userAnwersCount: number;
 };
 
 const state = proxy<AppState>({
@@ -132,6 +135,9 @@ const state = proxy<AppState>({
   get chatCount() {
     return Object.keys(this.poll?.chats || {}).length;
   },
+  get chatQuizCount() {
+    return Object.keys(this.quiz?.chats || {}).length;
+  },
   get canStartVote() {
     const votesPerVoter = this.poll?.votesPerVoter ?? 100;
 
@@ -149,11 +155,30 @@ const state = proxy<AppState>({
   },
   get hasAnswered() {
     const answerUsers = this.quiz?.userAnswers || {};
-    const userID = this.me?.id || "";
-    return answerUsers[userID] !== undefined ? true : false;
+    const userID = this.meQuiz?.id || "";
+
+    // Periksa apakah kuis sudah dimulai
+    const quizStarted = this.quiz?.hasStarted || false;
+
+    if (!quizStarted) {
+      // Jika kuis belum dimulai, kembalikan false
+      return false;
+    }
+    // Ambil total pertanyaan yang harus dijawab
+    const totalQuestions = Object.keys(this.quiz?.questions || {}).length;
+    // Ambil total jawaban yang telah diberikan oleh pengguna
+    const answeredQuestions = answerUsers[userID]?.length || 0;
+    // Periksa apakah pengguna telah menjawab semua pertanyaan
+    const allQuestionsAnswered = answeredQuestions === totalQuestions;
+    console.log(totalQuestions, answeredQuestions);
+    // Jika pengguna telah menjawab semua pertanyaan, redirect ke halaman hasil
+    return allQuestionsAnswered;
   },
   get rangkingCount() {
     return Object.keys(this.poll?.rangkings || {}).length;
+  },
+  get userAnwersCount() {
+    return Object.keys(this.quiz?.userAnswers || {}).length;
   },
 });
 
@@ -256,6 +281,9 @@ const actions = {
   removeNomination: (nominationID: string): void => {
     state.socket?.emit("remove_nomination", { nominationID });
   },
+  removeQuestion: (questionID: string): void => {
+    state.socket?.emit("remove_question", { id: questionID });
+  },
   removeParticipant: (userID: string): void => {
     console.log(userID);
     state.socket?.emit("remove_participant", { id: userID });
@@ -270,13 +298,16 @@ const actions = {
     state.socket?.emit("submit_rangkings", { rangkings });
   },
   submitUserQuiz: (answerUser: AnswerUserProps): void => {
-    state.socket?.emit("submit_user_answer", {answerUser});
+    state.socket?.emit("submit_user_answer", { answerUser });
   },
   cancelPoll: (): void => {
     state.socket?.emit("cancel_poll");
   },
   closePoll: (): void => {
     state.socket?.emit("close_poll");
+  },
+  closeQuiz: (): void => {
+    state.socket?.emit("close_quiz");
   },
   addWsError: (error: WsError): void => {
     state.wsErrors = [...state.wsErrors, { ...error, id: nanoid(6) }];

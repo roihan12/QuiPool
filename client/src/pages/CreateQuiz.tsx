@@ -30,7 +30,7 @@ import { Quiz } from "shared/quiz-types";
 
 type Input = z.infer<typeof quizCreationSchema>;
 
-const CreateQuiz = () => {
+const CreateQuiz: React.FC = () => {
   const currentState = useSnapshot(state);
   const { toast } = useToast();
 
@@ -83,10 +83,10 @@ const CreateQuiz = () => {
   };
   form.watch();
   return (
-    <div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+    <div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 pt-20">
       <Card
         className={cn(
-          "w-[480px] mt-10 border-2 border-b-4 border-r-4 border-violet-500  max-sm:w-[380px]"
+          "w-[480px]  border-2 border-b-4 border-r-4 border-violet-500  max-sm:w-[280px]"
         )}
       >
         <CardHeader className="text-center">

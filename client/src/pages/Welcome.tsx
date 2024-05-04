@@ -36,7 +36,10 @@ const Welcome: React.FC = () => {
           </button>
         </div>
         <div className="flex items-center justify-center gap-x-60 max-sm:gap-x-2 ">
-          <button className="rounded-lg border-2 border-b-4 border-r-4 border-violet-500 px-2 py-1 text-xl font-bold transition-all hover:-translate-y-[2px] md:block dark:border-white font-Nunito">
+          <button
+            className="rounded-lg border-2 border-b-4 border-r-4 border-violet-500 px-2 py-1 text-xl font-bold transition-all hover:-translate-y-[2px] md:block dark:border-white font-Nunito"
+            onClick={() => actions.setPage(AppPage.JoinQuiz)}
+          >
             Join Existing Quiz
           </button>
           <button

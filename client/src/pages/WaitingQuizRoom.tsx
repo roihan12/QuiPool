@@ -82,7 +82,7 @@ const WaitingQuizRoom: React.FC = () => {
             className="box btn-orange mx-2 pulsate"
             onClick={() => setIsChatOpen(true)}
           >
-            <BsChat size={24} /> <span>{currentState.chatCount}</span>
+            <BsChat size={24} /> <span>{currentState.chatQuizCount}</span>
           </button>
 
           {currentState.isQuizAdmin && (

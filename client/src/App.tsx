@@ -7,6 +7,7 @@ import Loader from "./components/ui/Loader";
 import { useSnapshot } from "valtio";
 import { getTokenPayload } from "./util";
 import SnackBar from "./components/ui/SnackBar";
+import { Toaster } from "./components/ui/toaster";
 
 devtools(state, "app state");
 const App: React.FC = () => {
@@ -78,7 +79,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Loader isLoading={currentState.isLoading} color="orange" width={120} />
+      <Loader isLoading={currentState.isLoading} color="orange" width={100} />
       {currentState.wsErrors.map((error) => (
         <SnackBar
           key={error.id}
@@ -90,6 +91,7 @@ const App: React.FC = () => {
           autoCloseDuration={5000}
         />
       ))}
+      <Toaster />
       <Pages />
     </>
   );
